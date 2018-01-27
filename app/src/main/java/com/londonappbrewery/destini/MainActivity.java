@@ -1,5 +1,7 @@
 package com.londonappbrewery.destini;
 
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,13 +15,17 @@ public class MainActivity extends AppCompatActivity {
     // TODO: Steps 4 & 8 - Declare member variables here:
     TextView mStoryTextView;
     Button mTopButton;
-    Button mBottomButton;
+    private Button mBottomButton;
     int mStoryIndex=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //restore preferences - jei isjungta programa
+        SharedPreferences settings = getSharedPreferences("myFile",0);
+        mStoryIndex=settings.getInt("mStoryIndex",1);
 
         // tikrina ar neirasyta i atminti apvertus ekrana.
         if (savedInstanceState != null){
@@ -32,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         mTopButton = (Button) findViewById(R.id.buttonTop);
         mBottomButton = (Button) findViewById(R.id.buttonBottom);
 
+
+
         tekstasEkrane();
 
     mTopButton.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
             //Toast.makeText(getApplicationContext(),"top",Toast.LENGTH_SHORT).show();
             if(mStoryIndex==1 || mStoryIndex==2){mStoryIndex=3;}
             else if(mStoryIndex==3){mStoryIndex=6;}
+            else{mStoryIndex=1;}
+            mTopButton.setBackgroundColor(Color.parseColor("#e74c3c"));
             tekstasEkrane();
         }
     });
@@ -54,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
             if(mStoryIndex==1){mStoryIndex=2;}
             else if(mStoryIndex==2){mStoryIndex=4;}
             else if(mStoryIndex==3){mStoryIndex=5;}
+            else{finish();}
             tekstasEkrane();
         }
     });
@@ -91,18 +102,22 @@ public class MainActivity extends AppCompatActivity {
         }
         if(mStoryIndex==4) {
             mStoryTextView.setText(R.string.T4_End);
-            mTopButton.setVisibility(View.GONE);
-            mBottomButton.setVisibility(View.GONE);
+            mTopButton.setText(R.string.startAgain);
+            mTopButton.setBackgroundColor(Color.parseColor("#3498db"));
+            mBottomButton.setText(R.string.close);
         }
         if(mStoryIndex==5) {
             mStoryTextView.setText(R.string.T5_End);
-            mTopButton.setVisibility(View.GONE);
-            mBottomButton.setVisibility(View.GONE);
+            mTopButton.setText(R.string.startAgain);
+            mTopButton.setBackgroundColor(Color.parseColor("#3498db"));
+            mBottomButton.setText(R.string.close);
         }
         if(mStoryIndex==6) {
             mStoryTextView.setText(R.string.T6_End);
-            mTopButton.setVisibility(View.GONE);
-            mBottomButton.setVisibility(View.GONE);
+            //mTopButton.setVisibility(View.GONE);
+            mTopButton.setText(R.string.startAgain);
+            mTopButton.setBackgroundColor(Color.parseColor("#3498db"));
+            mBottomButton.setText(R.string.close);
         }
     }
 
@@ -111,6 +126,15 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
         outState.putInt("mStoryIndex", mStoryIndex);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        SharedPreferences settings = getSharedPreferences("myFile",0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("mStoryIndex",mStoryIndex);
+        editor.apply();
     }
 
 }
